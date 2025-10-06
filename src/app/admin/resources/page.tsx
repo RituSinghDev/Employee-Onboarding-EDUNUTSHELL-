@@ -15,11 +15,14 @@ interface Resource {
   visibleTo: string[];
   language: string;
   createdAt: string;
+  [key: string]: unknown; // Add index signature
 }
 
 const AdminResourcesPage: React.FC = () => {
   const { user } = useAuth();
   const [resources, setResources] = useState<Resource[]>([]);
+  const [filteredResources, setFilteredResources] = useState<Resource[]>([]);
+  const [activeFilter, setActiveFilter] = useState<'all' | 'user' | 'admin'>('all');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -36,6 +39,11 @@ const AdminResourcesPage: React.FC = () => {
     }
   }, [user]);
 
+  // Apply filter whenever resources change
+  useEffect(() => {
+    handleFilterChange(activeFilter);
+  }, [resources]);
+
   const loadResources = async () => {
     setLoading(true);
     try {
@@ -51,13 +59,34 @@ const AdminResourcesPage: React.FC = () => {
           createdAt: r.createdAt,
         }));
         setResources(resources);
+        setFilteredResources(resources);
       }
     } catch (error) {
       console.error('Error loading resources:', error);
       setResources([]);
+      setFilteredResources([]);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleFilterChange = (filter: 'all' | 'user' | 'admin') => {
+    setActiveFilter(filter);
+    
+    let filtered: Resource[];
+    switch (filter) {
+      case 'user':
+        filtered = resources.filter(r => r.visibleTo.includes('user'));
+        break;
+      case 'admin':
+        filtered = resources.filter(r => r.visibleTo.includes('admin'));
+        break;
+      default:
+        filtered = resources;
+        break;
+    }
+    
+    setFilteredResources(filtered);
   };
 
   const handleCreateResource = async () => {
@@ -73,7 +102,9 @@ const AdminResourcesPage: React.FC = () => {
           visibleTo: ['user'],
           language: 'en',
         });
-        loadResources();
+        await loadResources();
+        // Reapply current filter after loading
+        handleFilterChange(activeFilter);
         alert('Resource created successfully!');
       } else {
         alert(response.error || 'Error creating resource. Please try again.');
@@ -90,7 +121,9 @@ const AdminResourcesPage: React.FC = () => {
     try {
       const response = await resourceAPI.deleteResource(resourceId);
       if (response.success) {
-        loadResources();
+        await loadResources();
+        // Reapply current filter after loading
+        handleFilterChange(activeFilter);
         alert('Resource deleted successfully!');
       } else {
         alert(response.error || 'Error deleting resource.');
@@ -105,61 +138,77 @@ const AdminResourcesPage: React.FC = () => {
     {
       key: 'title',
       label: 'Title',
-      render: (value: string, row: Resource) => (
-        <div>
-          <div className="text-text-primary font-medium">{value}</div>
-          <div className="text-text-muted text-sm">{row.description}</div>
-        </div>
-      ),
+      render: (value: unknown, row: Record<string, unknown>) => {
+        const title = value as string;
+        const resource = row as Resource;
+        return (
+          <div>
+            <div className="text-text-primary font-medium">{title}</div>
+            <div className="text-text-muted text-sm">{resource.description}</div>
+          </div>
+        );
+      },
     },
     {
       key: 'fileUrl',
       label: 'URL',
-      render: (value: string) => (
-        <a
-          href={value}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-accent hover:text-accent-light text-sm"
-        >
-          View Resource
-        </a>
-      ),
+      render: (value: unknown) => {
+        const url = value as string;
+        return (
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-accent hover:text-accent-light text-sm"
+          >
+            View Resource
+          </a>
+        );
+      },
     },
     {
       key: 'visibleTo',
       label: 'Visible To',
-      render: (value: string[]) => (
-        <div className="flex flex-wrap gap-1">
-          {value.map((role) => (
-            <span
-              key={role}
-              className="px-2 py-1 rounded-full text-xs font-medium bg-accent/20 text-accent capitalize"
-            >
-              {role}
-            </span>
-          ))}
-        </div>
-      ),
+      render: (value: unknown) => {
+        const visibleTo = value as string[];
+        return (
+          <div className="flex flex-wrap gap-1">
+            {visibleTo.map((role) => (
+              <span
+                key={role}
+                className="px-2 py-1 rounded-full text-xs font-medium bg-accent/20 text-accent capitalize"
+              >
+                {role}
+              </span>
+            ))}
+          </div>
+        );
+      },
     },
     {
       key: 'language',
       label: 'Language',
-      render: (value: string) => (
-        <span className="text-text-secondary uppercase">{value}</span>
-      ),
+      render: (value: unknown) => {
+        const language = value as string;
+        return (
+          <span className="text-text-secondary uppercase">{language}</span>
+        );
+      },
     },
     {
       key: 'actions',
       label: 'Actions',
-      render: (value: any, row: Resource) => (
-        <button
-          onClick={() => handleDeleteResource(row.id)}
-          className="px-4 py-2 rounded-lg bg-danger/20 text-danger hover:bg-danger/30 transition-all duration-200 text-sm font-medium"
-        >
-          Delete
-        </button>
-      ),
+      render: (_value: unknown, row: Record<string, unknown>) => {
+        const resource = row as Resource;
+        return (
+          <button
+            onClick={() => handleDeleteResource(resource.id)}
+            className="px-4 py-2 rounded-lg bg-danger/20 text-danger hover:bg-danger/30 transition-all duration-200 text-sm font-medium"
+          >
+            Delete
+          </button>
+        );
+      },
     },
   ];
 
@@ -195,28 +244,43 @@ const AdminResourcesPage: React.FC = () => {
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="glass-card p-4 rounded-xl text-center">
+          <button 
+            onClick={() => handleFilterChange('all')}
+            className={`glass-card p-4 rounded-xl text-center hover:bg-surface-hover transition-all duration-200 cursor-pointer ${
+              activeFilter === 'all' ? 'ring-2 ring-accent' : ''
+            }`}
+          >
             <div className="text-2xl font-bold text-text-primary">{resources.length}</div>
             <div className="text-text-muted text-sm">Total Resources</div>
-          </div>
-          <div className="glass-card p-4 rounded-xl text-center">
+          </button>
+          <button 
+            onClick={() => handleFilterChange('user')}
+            className={`glass-card p-4 rounded-xl text-center hover:bg-surface-hover transition-all duration-200 cursor-pointer ${
+              activeFilter === 'user' ? 'ring-2 ring-accent' : ''
+            }`}
+          >
             <div className="text-2xl font-bold text-accent">
               {resources.filter(r => r.visibleTo.includes('user')).length}
             </div>
             <div className="text-text-muted text-sm">User Accessible</div>
-          </div>
-          <div className="glass-card p-4 rounded-xl text-center">
+          </button>
+          <button 
+            onClick={() => handleFilterChange('admin')}
+            className={`glass-card p-4 rounded-xl text-center hover:bg-surface-hover transition-all duration-200 cursor-pointer ${
+              activeFilter === 'admin' ? 'ring-2 ring-accent' : ''
+            }`}
+          >
             <div className="text-2xl font-bold text-warning">
               {resources.filter(r => r.visibleTo.includes('admin')).length}
             </div>
             <div className="text-text-muted text-sm">Admin Only</div>
-          </div>
+          </button>
         </div>
 
         {/* Resources Table */}
         <Table
           columns={columns}
-          data={resources}
+          data={filteredResources as unknown as Record<string, unknown>[]}
           loading={loading}
         />
       </div>

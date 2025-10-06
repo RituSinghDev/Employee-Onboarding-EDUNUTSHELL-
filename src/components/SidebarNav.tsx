@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -15,7 +16,7 @@ const SidebarNav: React.FC = () => {
     { href: '/tasks', label: 'Tasks', icon: '✅' },
     { href: '/resources', label: 'Resources', icon: '📚' },
     { href: '/feedback', label: 'Feedback', icon: '💬' },
-    { href: '/profile', label: 'Profile', icon: '👤' },
+    // { href: '/profile', label: 'Profile', icon: '👤' },
   ];
 
   const adminNavItems = [
@@ -24,7 +25,7 @@ const SidebarNav: React.FC = () => {
     { href: '/admin/tasks', label: 'Tasks', icon: '📋' },
     { href: '/admin/resources', label: 'Resources', icon: '📁' },
     { href: '/admin/feedback', label: 'Feedback', icon: '📝' },
-    { href: '/admin/profile', label: 'Profile', icon: '👤' },
+    // { href: '/admin/profile', label: 'Profile', icon: '👤' },
   ];
 
   const navItems = user?.role === 'admin' ? adminNavItems : userNavItems;
@@ -51,47 +52,61 @@ const SidebarNav: React.FC = () => {
 
       {/* Sidebar */}
       <div
-        className={`fixed left-0 top-0 h-full w-64 glass-card transform transition-transform duration-300 z-40 ${
-          isOpen ? 'translate-x-0' : '-translate-x-full'
-        } lg:translate-x-0`}
+        className={`fixed left-0 top-0 h-full w-64 glass-card transform transition-transform duration-300 z-40 ${isOpen ? 'translate-x-0' : '-translate-x-full'
+          } lg:translate-x-0`}
       >
         <div className="p-6">
           {/* Logo */}
-          <div className="mb-8">
-            <h1 className="text-2xl font-bold text-accent">EDUNUTSHELL</h1>
-            <p className="text-text-secondary text-sm">Employee Onboarding</p>
+          <div className="mb-6 flex flex-col items-center">
+            <div className="w-32 h-auto mb-1">
+              <Image
+                src="/Edunutshell logo.jpeg"
+                alt="Edunutshell Logo"
+                width={128}
+                height={64}
+                className="w-full h-auto object-contain"
+                priority
+              />
+            </div>
+            <p className="text-text-secondary text-sm text-center leading-tight">Employee Onboarding</p>
           </div>
 
           {/* User Info */}
           <div className="mb-8 p-4 rounded-lg bg-secondary/30">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center">
+            <Link
+              href={user?.role === 'admin' ? '/admin/profile' : '/profile'}
+              className={`flex items-center space-x-3 cursor-pointer rounded-lg p-2 -m-2 transition-colors group ${isActive(user?.role === 'admin' ? '/admin/profile' : '/profile')
+                  ? 'bg-accent/20 border border-accent/30'
+                  : 'hover:bg-secondary/50'
+                }`}
+              onClick={() => setIsOpen(false)}
+            >
+              <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center group-hover:scale-105 transition-transform">
                 <span className="text-white font-semibold">
                   {user?.name?.charAt(0).toUpperCase()}
                 </span>
               </div>
-              <div>
-                <p className="text-text-primary font-medium">{user?.name}</p>
-                <p className="text-text-muted text-sm capitalize">{user?.role}</p>
+              <div className="leading-tight">
+                <p className="text-text-primary font-medium leading-none mb-1">{user?.name}</p>
+                <p className="text-text-muted text-sm capitalize leading-none">{user?.role}</p>
               </div>
-            </div>
+            </Link>
           </div>
 
           {/* Navigation */}
-          <nav className="space-y-2">
+          <nav className="space-y-1">
             {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
                 onClick={() => setIsOpen(false)}
-                className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
-                  isActive(item.href)
-                    ? 'bg-accent text-white'
-                    : 'text-text-secondary hover:bg-secondary/50 hover:text-text-primary'
-                }`}
+                className={`flex items-center space-x-3 px-4 py-2.5 rounded-lg transition-all duration-200 ${isActive(item.href)
+                  ? 'bg-accent text-white shadow-lg'
+                  : 'text-text-secondary hover:bg-secondary/50 hover:text-text-primary hover:translate-x-1'
+                  }`}
               >
-                <span className="text-lg">{item.icon}</span>
-                <span>{item.label}</span>
+                <span className="text-lg flex-shrink-0">{item.icon}</span>
+                <span className="font-medium leading-none">{item.label}</span>
               </Link>
             ))}
           </nav>
@@ -100,10 +115,10 @@ const SidebarNav: React.FC = () => {
           <div className="absolute bottom-6 left-6 right-6">
             <button
               onClick={logout}
-              className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-danger/20 hover:text-danger transition-colors"
+              className="w-full flex items-center space-x-3 px-4 py-2.5 rounded-lg text-text-secondary hover:bg-danger/20 hover:text-danger transition-all duration-200 hover:translate-x-1"
             >
-              <span className="text-lg">🚪</span>
-              <span>Logout</span>
+              <span className="text-lg flex-shrink-0">🚪</span>
+              <span className="font-medium leading-none">Logout</span>
             </button>
           </div>
         </div>

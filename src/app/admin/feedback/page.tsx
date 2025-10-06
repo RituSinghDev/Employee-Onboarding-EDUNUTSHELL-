@@ -309,51 +309,44 @@ const AdminFeedbackPage: React.FC = () => {
           </button>
         </div>
 
-        {/* Filter Tabs */}
-        <div className="glass-card p-1 rounded-xl inline-flex">
-          {[
-            { key: 'all', label: 'All Forms', count: forms.length },
-            { key: 'user', label: 'User Forms', count: forms.filter(f => f.assignedTo === 'user').length },
-            { key: 'admin', label: 'Admin Forms', count: forms.filter(f => f.assignedTo === 'admin').length },
-            { key: 'both', label: 'Both (User & Admin)', count: forms.filter(f => f.assignedTo === 'both').length },
-          ].map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => setActiveFilter(tab.key as 'all' | 'user' | 'admin' | 'both')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${activeFilter === tab.key
-                ? 'bg-accent text-white shadow-lg'
-                : 'text-text-secondary hover:text-text-primary hover:bg-accent/10'
-                }`}
-            >
-              {tab.label} ({tab.count})
-            </button>
-          ))}
-        </div>
+
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="glass-card p-4 rounded-xl text-center">
+          <button 
+            onClick={() => setActiveFilter('all')}
+            className="glass-card p-4 rounded-xl text-center hover:bg-surface-hover transition-all duration-200 cursor-pointer"
+          >
             <div className="text-2xl font-bold text-text-primary">{forms.length}</div>
             <div className="text-text-muted text-sm">Total Forms</div>
-          </div>
-          <div className="glass-card p-4 rounded-xl text-center">
+          </button>
+          <button 
+            onClick={() => setActiveFilter('user')}
+            className="glass-card p-4 rounded-xl text-center hover:bg-surface-hover transition-all duration-200 cursor-pointer"
+          >
             <div className="text-2xl font-bold text-accent">
               {forms.filter(f => f.assignedTo === 'user').length}
             </div>
             <div className="text-text-muted text-sm">User Forms</div>
-          </div>
-          <div className="glass-card p-4 rounded-xl text-center">
+          </button>
+          <button 
+            onClick={() => setActiveFilter('admin')}
+            className="glass-card p-4 rounded-xl text-center hover:bg-surface-hover transition-all duration-200 cursor-pointer"
+          >
             <div className="text-2xl font-bold text-warning">
               {forms.filter(f => f.assignedTo === 'admin').length}
             </div>
             <div className="text-text-muted text-sm">Admin Forms</div>
-          </div>
-          <div className="glass-card p-4 rounded-xl text-center">
+          </button>
+          <button 
+            onClick={() => setActiveFilter('both')}
+            className="glass-card p-4 rounded-xl text-center hover:bg-surface-hover transition-all duration-200 cursor-pointer"
+          >
             <div className="text-2xl font-bold text-success">
               {forms.filter(f => f.assignedTo === 'both').length}
             </div>
             <div className="text-text-muted text-sm">Both Forms</div>
-          </div>
+          </button>
         </div>
 
         {/* Forms Table */}

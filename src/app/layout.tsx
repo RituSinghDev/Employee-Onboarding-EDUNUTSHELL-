@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "OnboardFlow - Employee Onboarding Platform",
-  description: "Streamline your employee onboarding process with OnboardFlow",
+  title: "Edunutshell - Employee Onboarding Platform",
+  description: "Streamline your employee onboarding process with Edunutshell",
 };
 
 export default function RootLayout({

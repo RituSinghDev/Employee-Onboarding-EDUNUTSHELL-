@@ -89,7 +89,7 @@ const AdminDashboard: React.FC = () => {
 
     // Remove duplicates by grouping tasks with same title and description
     const uniqueTasks = todaysTasksFiltered.reduce((acc: Task[], current) => {
-      const existing = acc.find(task => 
+      const existing = acc.find(task =>
         task.title === current.title && task.description === current.description
       );
       if (!existing) {
@@ -125,65 +125,55 @@ const AdminDashboard: React.FC = () => {
     <ProtectedRoute requiredRole="admin">
       <Layout>
         <div className="space-y-6">
-          {/* Modern Welcome Section */}
-          <div className="welcome-section relative overflow-hidden">
-            {/* Subtle background elements */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-accent/10 to-transparent rounded-full blur-2xl"></div>
-            <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-accent/5 to-transparent rounded-full blur-xl"></div>
-            
+          {/* Enhanced Welcome Section */}
+          <div className="glass-card p-8 rounded-2xl relative overflow-hidden bg-gradient-to-br from-surface via-surface to-accent/5">
+            {/* Enhanced background elements */}
+            <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-accent/15 to-transparent rounded-full blur-3xl"></div>
+            <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-accent/10 to-transparent rounded-full blur-2xl"></div>
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-accent/5 to-transparent rounded-full blur-3xl"></div>
+
             <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between">
-              <div className="flex items-center space-x-6 mb-4 lg:mb-0">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-accent flex items-center justify-center shadow-lg">
-                  <span className="text-2xl">👨‍💼</span>
+              <div className="flex items-center space-x-8 mb-6 lg:mb-0">
+                <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-accent to-accent/80 flex items-center justify-center shadow-xl shadow-accent/20">
+                  <span className="text-3xl">👨‍💼</span>
                 </div>
                 <div>
-                  <h1 className="text-3xl font-bold text-text-primary mb-1">
+                  <h1 className="text-4xl font-bold text-text-primary mb-2 bg-gradient-to-r from-text-primary to-accent bg-clip-text">
                     Welcome back, {user?.name}
                   </h1>
-                  <p className="text-text-secondary text-lg">
+                  <p className="text-text-secondary text-xl font-medium">
                     Here's what's happening with your team today
                   </p>
+                  <div className="mt-3 flex items-center gap-3">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 bg-success rounded-full animate-pulse shadow-lg shadow-success/30"></div>
+                      <span className="text-success text-sm font-semibold">System Online</span>
+                    </div>
+                    <div className="w-1 h-1 bg-text-muted rounded-full"></div>
+                    <span className="text-text-muted text-sm">Admin Dashboard</span>
+                  </div>
                 </div>
               </div>
-              
-              <div className="flex flex-col items-end space-y-1">
-                <div className="text-text-primary font-medium">
-                  {new Date().toLocaleDateString('en-US', { 
-                    weekday: 'long', 
-                    month: 'long', 
-                    day: 'numeric' 
+
+              <div className="flex flex-col items-end space-y-2 bg-surface/30 backdrop-blur-sm rounded-xl p-4 border border-accent/10">
+                <div className="text-text-primary font-bold text-lg">
+                  {new Date().toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    month: 'long',
+                    day: 'numeric'
                   })}
                 </div>
-                <div className="text-text-muted text-sm">
-                  {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                <div className="text-text-muted text-base font-medium">
+                  {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </div>
-                <div className="flex items-center gap-2 mt-2">
-                  <div className="w-2 h-2 bg-success rounded-full animate-pulse"></div>
-                  <span className="text-success text-xs font-medium">System Online</span>
+                <div className="text-accent text-sm font-medium">
+                  {new Date().getFullYear()}
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Essential Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="glass-card p-4 rounded-xl text-center">
-              <div className="text-2xl font-bold text-text-primary">{stats.totalEmployees}</div>
-              <div className="text-text-muted text-sm">Employees</div>
-            </div>
-            <div className="glass-card p-4 rounded-xl text-center">
-              <div className="text-2xl font-bold text-accent">{stats.totalTasks}</div>
-              <div className="text-text-muted text-sm">Total Tasks</div>
-            </div>
-            <div className="glass-card p-4 rounded-xl text-center">
-              <div className="text-2xl font-bold text-success">{stats.completedTasks}</div>
-              <div className="text-text-muted text-sm">Completed</div>
-            </div>
-            <div className="glass-card p-4 rounded-xl text-center">
-              <div className="text-2xl font-bold text-warning">{stats.todaysTasks}</div>
-              <div className="text-text-muted text-sm">Due Today</div>
-            </div>
-          </div>
+
 
           {/* Today's Tasks Section */}
           <div className="glass-card p-6 rounded-xl">
@@ -198,30 +188,28 @@ const AdminDashboard: React.FC = () => {
                 {todaysTasks.slice(0, 4).map((task) => (
                   <div key={task._id} className="flex-shrink-0 w-64 p-4 rounded-xl bg-surface border border-accent/10 hover:border-accent/20 transition-all">
                     <div className="flex items-start justify-between mb-3">
-                      <span className={`status-badge text-xs ${
-                        task.status === 'completed' ? 'status-completed' :
-                        task.status === 'in-progress' ? 'status-in-progress' : 'status-pending'
-                      }`}>
+                      <span className={`status-badge text-xs ${task.status === 'completed' ? 'status-completed' :
+                          task.status === 'in-progress' ? 'status-in-progress' : 'status-pending'
+                        }`}>
                         {task.status.replace('-', ' ')}
                       </span>
                       <span className="text-text-muted text-xs">
-                        {new Date(task.dueDate).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                        {new Date(task.dueDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </span>
                     </div>
                     <h3 className="font-medium text-text-primary mb-2 line-clamp-2">{task.title}</h3>
                     <p className="text-text-muted text-sm line-clamp-3">{task.description}</p>
                     <div className="mt-3 pt-3 border-t border-accent/10">
-                      <span className={`text-xs px-2 py-1 rounded ${
-                        task.type === 'daily' ? 'bg-info/20 text-info' : 'bg-warning/20 text-warning'
-                      }`}>
+                      <span className={`text-xs px-2 py-1 rounded ${task.type === 'daily' ? 'bg-info/20 text-info' : 'bg-warning/20 text-warning'
+                        }`}>
                         {task.type}
                       </span>
                     </div>
                   </div>
                 ))}
-                
+
                 {/* View All Tasks Card */}
-                <div 
+                <div
                   className="flex-shrink-0 w-64 p-4 rounded-xl bg-gradient-accent hover:shadow-lg transition-all cursor-pointer group"
                   onClick={() => window.location.href = '/admin/tasks'}
                 >
@@ -251,66 +239,42 @@ const AdminDashboard: React.FC = () => {
             )}
           </div>
 
-          {/* Quick Navigation */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <button
-              onClick={() => window.location.href = '/admin/tasks'}
-              className="glass-card p-4 rounded-xl hover:border-accent/30 transition-all text-center group"
-            >
-              <div className="text-2xl mb-2 group-hover:scale-110 transition-transform">📋</div>
-              <div className="text-text-primary font-medium text-sm">Tasks</div>
-            </button>
-            <button
-              onClick={() => window.location.href = '/admin/employees'}
-              className="glass-card p-4 rounded-xl hover:border-accent/30 transition-all text-center group"
-            >
-              <div className="text-2xl mb-2 group-hover:scale-110 transition-transform">👥</div>
-              <div className="text-text-primary font-medium text-sm">Employees</div>
-            </button>
-            <button
-              onClick={() => window.location.href = '/admin/resources'}
-              className="glass-card p-4 rounded-xl hover:border-accent/30 transition-all text-center group"
-            >
-              <div className="text-2xl mb-2 group-hover:scale-110 transition-transform">📁</div>
-              <div className="text-text-primary font-medium text-sm">Resources</div>
-            </button>
-            <button
-              onClick={() => window.location.href = '/admin/feedback'}
-              className="glass-card p-4 rounded-xl hover:border-accent/30 transition-all text-center group"
-            >
-              <div className="text-2xl mb-2 group-hover:scale-110 transition-transform">📝</div>
-              <div className="text-text-primary font-medium text-sm">Feedback</div>
-            </button>
-          </div>
-
-          {/* Recent Activity */}
-          <div className="glass-card p-6 rounded-xl">
-            <h2 className="text-xl font-semibold text-text-primary mb-4">Recent Activity</h2>
-            <div className="space-y-3">
-              {allTasks
-                .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
-                .slice(0, 3)
-                .map((task) => (
-                  <div key={task._id} className="flex items-center gap-3 p-3 rounded-lg bg-surface/50">
-                    <div className={`w-2 h-2 rounded-full ${
-                      task.status === 'completed' ? 'bg-success' :
-                      task.status === 'in-progress' ? 'bg-warning' : 'bg-danger'
-                    }`}></div>
-                    <div className="flex-1">
-                      <p className="text-text-primary text-sm">
-                        <span className="font-medium">{task.assignedTo.name}</span> {
-                          task.status === 'completed' ? 'completed' :
-                          task.status === 'in-progress' ? 'started working on' : 'was assigned'
-                        } "{task.title}"
-                      </p>
-                      <p className="text-text-muted text-xs">
-                        {new Date(task.updatedAt).toLocaleDateString()} at {new Date(task.updatedAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+          {/* Quick Access Section */}
+          <div className="space-y-4">
+            <h2 className="text-2xl font-bold text-text-primary">Quick Access</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <button
+                onClick={() => window.location.href = '/admin/tasks'}
+                className="glass-card p-4 rounded-xl hover:border-accent/30 transition-all text-center group"
+              >
+                <div className="text-2xl mb-2 group-hover:scale-110 transition-transform">📋</div>
+                <div className="text-text-primary font-medium text-sm">Tasks</div>
+              </button>
+              <button
+                onClick={() => window.location.href = '/admin/employees'}
+                className="glass-card p-4 rounded-xl hover:border-accent/30 transition-all text-center group"
+              >
+                <div className="text-2xl mb-2 group-hover:scale-110 transition-transform">👥</div>
+                <div className="text-text-primary font-medium text-sm">Employees</div>
+              </button>
+              <button
+                onClick={() => window.location.href = '/admin/resources'}
+                className="glass-card p-4 rounded-xl hover:border-accent/30 transition-all text-center group"
+              >
+                <div className="text-2xl mb-2 group-hover:scale-110 transition-transform">📁</div>
+                <div className="text-text-primary font-medium text-sm">Resources</div>
+              </button>
+              <button
+                onClick={() => window.location.href = '/admin/feedback'}
+                className="glass-card p-4 rounded-xl hover:border-accent/30 transition-all text-center group"
+              >
+                <div className="text-2xl mb-2 group-hover:scale-110 transition-transform">📝</div>
+                <div className="text-text-primary font-medium text-sm">Feedback</div>
+              </button>
             </div>
           </div>
+
+
         </div>
       </Layout>
     </ProtectedRoute>

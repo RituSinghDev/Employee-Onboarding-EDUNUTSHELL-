@@ -383,7 +383,7 @@ const AdminEmployeesPage: React.FC = () => {
                     <div className="flex items-center space-x-3">
                         <button
                             onClick={() => setIsBulkUploadModalOpen(true)}
-                            className="px-4 py-2 rounded-lg bg-secondary/50 text-text-primary hover:bg-secondary/70 transition-all duration-200 text-sm font-medium border border-accent/20"
+                            className="btn-modern"
                         >
                             Bulk Upload
                         </button>
@@ -410,7 +410,7 @@ const AdminEmployeesPage: React.FC = () => {
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="modern-input pl-10"
-                                placeholder="Search employees by name, email, phone, or department..."
+                                placeholder="Search employees..."
                             />
                             {searchTerm && (
                                 <button
